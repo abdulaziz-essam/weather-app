@@ -42,7 +42,11 @@ Start the server:
 
 bash
 Copy code
-npm start
+for http 
+cd http && node index.js
+for websocket run both files  
+cd websocket-question &&
+node websocket_client.js && node websocket.js
 The API server will start running on port 3000 by default.
 
 Usage
