@@ -43,7 +43,7 @@ Start the server:
 bash
 Copy code
 for http 
-cd http && node index.js
+cd http && node index.js 
 for websocket run both files  
 cd websocket-question &&
 node websocket_client.js && node websocket.js
@@ -55,7 +55,8 @@ The Weather API provides several endpoints for retrieving weather data:
 /weather/city/:city: Retrieve weather data for a specific city.
 /weather/bulk: Retrieve weather data for multiple cities in bulk.
 /statistics: Get statistics for weather data.
-/map: Access map-related functionality to view weather data for cities.
+/map: Access map-related functionality to view weather data for cities. 
+![alt text](image.png)
 For detailed usage instructions and examples, refer to the Endpoints section below.
 
 Endpoints
