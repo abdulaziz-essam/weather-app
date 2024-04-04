@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Map</title>
+    <style>
+        #map {
+            height: 400px;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        #countryInput {
+            margin-top: 10px;
+        }
+
+        #weatherInfo {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <input type="text" id="countryInput" placeholder="Enter country name">
+    <button onclick="searchCountry()">Search</button>
+    <div id="weatherInfo"></div>
+
+    <script>
+        var map;
+        var markers = [];
+
+        function initMap() {
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: {lat: 0, lng: 0},
+                zoom: 2
+            });
+        }
+
+        function searchCountry() {
+            var country = document.getElementById('countryInput').value;
+            fetch(`http://localhost:3000/live?country=${country}`)
+                .then(response => response.json())
+                .then(data => {
+                    // Update the map with weather data
+                    renderWeatherData(data);
+                })
+                .catch(error => console.error('Error fetching weather data:', error));
+        }
+
+        function renderWeatherData(data) {
+    console.log('Weather data:', data);
+    console.log('Location:', data.coord);
+
+    // Clear previous markers
+    markers.forEach(marker => marker.setMap(null));
+    markers = [];
+
+    // Extract necessary data for markers
+    var location = data.coord;
+    var cityName = data.name;
+    var temperature = data.main.temp;
+    var description = data.weather[0].description;
+
+    // Check if location data is valid
+    if (location && typeof location.lat === 'number' && typeof location.lon === 'number') {
+        // Create marker
+        var marker = new google.maps.Marker({
+            position: { lat: location.lat, lng: location.lon },
+            map: map,
+            title: `${cityName}: ${temperature}°C, ${description}`
+        });
+
+        // Add marker to markers array
+        markers.push(marker);
+
+        // Center map to marker
+        map.setCenter({ lat: location.lat, lng: location.lon });
+
+        // Display weather info
+        var weatherInfoDiv = document.getElementById('weatherInfo');
+        weatherInfoDiv.innerHTML = `
+            <p>City: ${cityName}</p>
+            <p>Temperature: ${temperature}°C</p>
+            <p>Description: ${description}</p>
+        `;
+    } else {
+        console.error('Invalid location data received:', location);
+        // Display error message
+        var weatherInfoDiv = document.getElementById('weatherInfo');
+        weatherInfoDiv.innerHTML = `<p>Error: Invalid location data received</p>`;
+    }
+}
+
+        // Load Google Maps API and initialize the map
+        window.onload = function() {
+            initMap();
+        };
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAQUCQF5DQpZvoMmwCgQMQeJ5oh37ZpWH4&callback=initMap" async defer></script>
+</body>
+</html>
